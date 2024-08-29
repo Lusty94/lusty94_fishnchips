@@ -46,7 +46,7 @@ SCRIPT SUPPORT VIA DISCORD: https://discord.gg/BJGFrThmA8
 - [qb-inventory](https://github.com/qbcore-framework/qb-inventory)
 - [qb-clothing](https://github.com/qbcore-framework/qb-clothing)
 - [interact-sound](https://github.com/plunkettscott/interact-sound)
-- [Moreo Fish n Chips MLO](https://www.gta5-mods.com/maps/gta-iv-suffolk-church-sp-fivem)
+- [Moreo Fish n Chips MLO](https://forum.cfx.re/t/free-mlo-fivem-fish-chip-restaurant/5262094)
 - [ox_lib](https://github.com/overextended/ox_lib/releases/)
 
 
