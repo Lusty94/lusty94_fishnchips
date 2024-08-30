@@ -1607,6 +1607,7 @@ end)
 
 --dont touch
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+    for _, v in pairs(spawnedFishProps) do SetEntityAsMissionEntity(v, false, true) DeleteObject(v) end print('Fish N Chips Props - Objects Deleted')
     spawnedFishProps = {}
     QBCore.Functions.GetPlayerData(function(PlayerData)
         PlayerJob = PlayerData.job
@@ -1632,7 +1633,7 @@ AddEventHandler('onResourceStop', function(resource)
 	if resource == GetCurrentResourceName() then
         busy = false
         LockInventory(false)
-        for _, v in pairs(spawnedFishProps) do SetEntityAsMissionEntity(v, false, true) DeleteObject(v) end print('Fish N Chips Props - Objects Deleted')
+        for _, v in pairs(spawnedFishProps) do SetEntityAsMissionEntity(v, false, true) DeleteObject(v) end
         spawnedFishProps = {}
         for k,v in pairs(Config.InteractionLocations.Props) do if TargetType == 'qb' then exports['qb-target']:RemoveTargetEntity(fishProps, 'fishProps') elseif TargetType == 'ox' then exports.ox_target:removeLocalEntity(fishProps, 'fishProps') end end
         for k, v in pairs(Config.InteractionLocations.JobAreas) do if TargetType == 'qb' then exports['qb-target']:RemoveZone(v.Name) elseif TargetType == 'ox' then exports.ox_target:removeZone(v.Name) end end
