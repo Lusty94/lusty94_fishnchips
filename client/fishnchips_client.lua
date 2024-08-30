@@ -1584,7 +1584,7 @@ CreateThread(function()
 end)
 
 --spawned props
-CreateThread(function()
+function spawnFishProps()
     for k,v  in pairs(Config.InteractionLocations.Props) do
         lib.requestModel(v.Model, 5000)
         fishProps = CreateObject(v.Model, v.Coords.x, v.Coords.y, v.Coords.z - 1, true, false, false)
@@ -1598,7 +1598,7 @@ CreateThread(function()
             exports.ox_target:addLocalEntity(fishProps, { { name = 'fishProps', groups = v.Job, icon = v.Icon, label = v.Label, event = v.Event, distance = v.Distance} })
         end
     end
-end)
+end
 
 --dont touch
 RegisterNetEvent("lusty94_fishnchips:client:ToggleDuty", function()
@@ -1609,6 +1609,7 @@ end)
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     for _, v in pairs(spawnedFishProps) do SetEntityAsMissionEntity(v, false, true) DeleteObject(v) end print('Fish N Chips Props - Objects Deleted')
     spawnedFishProps = {}
+    spawnFishProps()
     QBCore.Functions.GetPlayerData(function(PlayerData)
         PlayerJob = PlayerData.job
         if PlayerData.job.onduty then
@@ -1640,5 +1641,12 @@ AddEventHandler('onResourceStop', function(resource)
         for k, v in pairs(Config.InteractionLocations.PreparationAreas) do if TargetType == 'qb' then exports['qb-target']:RemoveZone(v.Name) elseif TargetType == 'ox' then exports.ox_target:removeZone(v.Name) end end
         for k, v in pairs(Config.InteractionLocations.StorageAreas) do if TargetType == 'qb' then exports['qb-target']:RemoveZone(v.Name) elseif TargetType == 'ox' then exports.ox_target:removeZone(v.Name) end end              
         print('^5--<^3!^5>-- ^7| Lusty94 |^5 ^5--<^3!^5>--^7 Up & Fish N Chips V1.0.0 Stopped Successfully ^5--<^3!^5>--^7')
+    end
+end)
+
+--dont touch
+AddEventHandler('onResourceStart', function(resource)
+	if resource == GetCurrentResourceName() then
+        spawnFishProps()
     end
 end)
