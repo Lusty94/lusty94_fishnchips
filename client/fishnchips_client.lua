@@ -1261,12 +1261,7 @@ end)
 --collection tray
 RegisterNetEvent("lusty94_fishnchips:client:OpenTray", function()
     if InvType == 'qb' then
-        local stashinfo = { maxweight = 100000, slots = 6, }
-        TriggerEvent("inventory:client:SetCurrentStash", "fishnchipscollection")
-        TriggerServerEvent("inventory:server:OpenInventory", "stash", "fishnchipscollection", {
-            maxweight = stashinfo.maxweight,
-            slots = stashinfo.slots,
-        })
+        TriggerServerEvent('lusty94_fishnchips:server:OpenTray')
     elseif InvType == 'ox' then
         exports.ox_inventory:openInventory('stash', 'fishnchipscollection')
     end
@@ -1276,13 +1271,8 @@ end)
 --storage heater
 RegisterNetEvent("lusty94_fishnchips:client:OpenStorageHeater", function()
     if onDuty then
-        local stashinfo = { maxweight = 10000000, slots = 64, }
         if InvType == 'qb' then
-            TriggerEvent("inventory:client:SetCurrentStash", "fishnchipsstorageheater")
-            TriggerServerEvent("inventory:server:OpenInventory", "stash", "fishnchipsstorageheater", {
-                maxweight = stashinfo.maxweight,
-            slots = stashinfo.slots,
-            })
+            TriggerServerEvent('lusty94_fishnchips:server:OpenStorageHeater')
         elseif InvType == 'ox' then
             exports.ox_inventory:openInventory('stash', 'fishnchipsstorageheater')
         end
@@ -1296,12 +1286,7 @@ end)
 RegisterNetEvent("lusty94_fishnchips:client:OpenServiceCounter", function()
     if onDuty then
         if InvType == 'qb' then
-            local stashinfo = { maxweight = 10000000, slots = 64, }
-            TriggerEvent("inventory:client:SetCurrentStash", "fishnchipsservicecounter")
-            TriggerServerEvent("inventory:server:OpenInventory", "stash", "fishnchipsservicecounter", {
-                maxweight = stashinfo.maxweight,
-            slots = stashinfo.slots,
-            })
+            TriggerServerEvent('lusty94_fishnchips:server:OpenServiceCounter')
         elseif InvType == 'ox' then
             exports.ox_inventory:openInventory('stash', 'fishnchipsservicecounter')
         end

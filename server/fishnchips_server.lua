@@ -351,8 +351,8 @@ RegisterNetEvent('lusty94_fishnchips:server:eatFood', function(item)
     end
     if not fishFoods then return end
     if InvType == 'qb' then
-        Player.Functions.RemoveItem(fishFoods, 1)
-        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[fishFoods], "remove", 1)
+        exports['qb-inventory']:RemoveItem(src, fishFoods, 1, false, false, false)
+        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[fishFoods], "remove", 1)
     elseif InvType == 'ox' then
         exports.ox_inventory:RemoveItem(src, fishFoods, 1)
     end
@@ -373,8 +373,8 @@ RegisterNetEvent('lusty94_fishnchips:server:Drink', function(item)
     end
     if not fishDrinks then return end
     if InvType == 'qb' then
-        Player.Functions.RemoveItem(fishDrinks, 1)
-        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[fishDrinks], "remove", 1)
+        exports['qb-inventory']:RemoveItem(src, fishDrinks, 1, false, false, false)
+        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[fishDrinks], "remove", 1)
     elseif InvType == 'ox' then
         exports.ox_inventory:RemoveItem(src, fishDrinks, 1)
     end
@@ -394,8 +394,8 @@ RegisterNetEvent('lusty94_fishnchips:server:GiveKnife', function(knifeType)
         knife = 'fishnchipsbreadknife'
     end
     if InvType == 'qb' then
-            Player.Functions.AddItem(knife, 1)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[knife], 'add', 1)
+            exports['qb-inventory']:AddItem(src, knife, 1, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[knife], 'add', 1)
     elseif InvType == 'ox' then
         if exports.ox_inventory:CanCarryItem(src, knife, 1) then
             exports.ox_inventory:AddItem(src,knife, 1)
@@ -453,8 +453,8 @@ RegisterNetEvent('lusty94_fishnchips:server:GiveIngredients', function(ingredien
         item = 'fishnchipsgelato'
     end
     if InvType == 'qb' then
-            Player.Functions.AddItem(item, amount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[item], 'add', amount)
+            exports['qb-inventory']:AddItem(src, item, amount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[item], 'add', amount)
     elseif InvType == 'ox' then
         if exports.ox_inventory:CanCarryItem(src, item, amount) then
             exports.ox_inventory:AddItem(src,item, amount)
@@ -476,8 +476,8 @@ RegisterNetEvent('lusty94_fishnchips:server:GiveDrinksCup', function(cupType, am
         cup = 'fishnchipssoftdrinkscup'
     end
     if InvType == 'qb' then
-            Player.Functions.AddItem(cup, amount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[cup], 'add', amount)
+        exports['qb-inventory']:AddItem(src, cup, amount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[cup], 'add', amount)
     elseif InvType == 'ox' then
         if exports.ox_inventory:CanCarryItem(src, cup, amount) then
             exports.ox_inventory:AddItem(src,cup, amount)
@@ -505,16 +505,18 @@ RegisterNetEvent('lusty94_fishnchips:server:PourSoftDrinks', function(amount, ec
         drinkType = 'fishnchipssprunk'
     end
     if InvType == 'qb' then
-        Player.Functions.RemoveItem('fishnchipssoftdrinkscup', requiredAmount * amount)
-        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipssoftdrinkscup'], 'remove', requiredAmount * amount)
-        Player.Functions.AddItem(drinkType, amount * returnAmount)
-        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[drinkType], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'fishnchipssoftdrinkscup', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipssoftdrinkscup'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, drinkType, amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[drinkType], 'add', amount * returnAmount)
+        end
     elseif InvType == 'ox' then
-        if exports.ox_inventory:CanCarryItem(src, drinkType, amount * returnAmount) then
-            exports.ox_inventory:RemoveItem(src,'fishnchipssoftdrinkscup', requiredAmount * amount)
-            exports.ox_inventory:AddItem(src,drinkType, amount * returnAmount)
-        else
-            SendNotify(src, Config.Language.Notifications.CantCarry, 'error', 2000)
+        if exports.ox_inventory:RemoveItem(src,'fishnchipssoftdrinkscup', requiredAmount * amount) then
+            if exports.ox_inventory:CanCarryItem(src, drinkType, amount * returnAmount) then
+                exports.ox_inventory:AddItem(src,drinkType, amount * returnAmount)
+            else
+                SendNotify(src, Config.Language.Notifications.CantCarry, 'error', 2000)
+            end
         end
     end
 end)
@@ -533,16 +535,18 @@ RegisterNetEvent('lusty94_fishnchips:server:PourHotDrinks', function(amount, cof
         drinkType = 'fishnchipstea'
     end
     if InvType == 'qb' then
-        Player.Functions.RemoveItem('fishnchipscoffeecup', requiredAmount * amount)
-        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipscoffeecup'], 'remove', requiredAmount * amount)
-        Player.Functions.AddItem(drinkType, amount * returnAmount)
-        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[drinkType], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'fishnchipscoffeecup', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipscoffeecup'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, drinkType, amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[drinkType], 'add', amount * returnAmount)
+        end
     elseif InvType == 'ox' then
-        if exports.ox_inventory:CanCarryItem(src, drinkType, amount * returnAmount) then
-            exports.ox_inventory:RemoveItem(src,'fishnchipscoffeecup', requiredAmount * amount)
-            exports.ox_inventory:AddItem(src,drinkType, amount * returnAmount)
-        else
-            SendNotify(src, Config.Language.Notifications.CantCarry, 'error', 2000)
+        if exports.ox_inventory:RemoveItem(src,'fishnchipscoffeecup', requiredAmount * amount) then
+            if exports.ox_inventory:CanCarryItem(src, drinkType, amount * returnAmount) then
+                exports.ox_inventory:AddItem(src,drinkType, amount * returnAmount)
+            else
+                SendNotify(src, Config.Language.Notifications.CantCarry, 'error', 2000)
+            end
         end
     end
 end)
@@ -560,10 +564,10 @@ RegisterNetEvent('lusty94_fishnchips:server:SlicePotatoes', function(amount)
     local requiredAmount = 1
     local returnAmount = 2
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('fishnchipspotato', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipspotato'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fishnchipsrawfries', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsrawfries'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'fishnchipspotato', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipspotato'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fishnchipsrawfries', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsrawfries'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'fishnchipspotato', requiredAmount * amount) then
@@ -584,10 +588,10 @@ RegisterNetEvent('lusty94_fishnchips:server:SliceBuns', function(amount)
     local requiredAmount = 1
     local returnAmount = 2
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('fishnchipsburgerbun', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsburgerbun'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fishnchipsslicedburgerbun', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsslicedburgerbun'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'fishnchipsburgerbun', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsburgerbun'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fishnchipsslicedburgerbun', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsslicedburgerbun'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'fishnchipsburgerbun', requiredAmount * amount) then
@@ -612,49 +616,54 @@ RegisterNetEvent('lusty94_fishnchips:server:BatterFish', function(amount, cod, h
     if cod then
         fishType = 'frozen_cod_battered'
         if InvType == 'qb' then
-            Player.Functions.RemoveItem('frozen_cod_fillet', requiredAmount * amount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_cod_fillet'], 'remove', requiredAmount * amount)
+            if exports['qb-inventory']:RemoveItem(src, 'frozen_cod_fillet', requiredAmount * amount, false, false, false) then
+                TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_cod_fillet'], 'remove', requiredAmount * amount)
+            end
         elseif InvType == 'ox' then
             exports.ox_inventory:RemoveItem(src,'frozen_cod_fillet', requiredAmount * amount)
         end
     elseif haddock then
         fishType = 'frozen_haddock_battered'
         if InvType == 'qb' then
-            Player.Functions.RemoveItem('frozen_haddock_fillet', requiredAmount * amount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_haddock_fillet'], 'remove', requiredAmount * amount)
+            if exports['qb-inventory']:RemoveItem(src, 'frozen_haddock_fillet', requiredAmount * amount, false, false, false) then
+                TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_haddock_fillet'], 'remove', requiredAmount * amount)
+            end
         elseif InvType == 'ox' then
             exports.ox_inventory:RemoveItem(src,'frozen_haddock_fillet', requiredAmount * amount)
         end
     elseif plaice then
         fishType = 'frozen_plaice_battered'
         if InvType == 'qb' then
-            Player.Functions.RemoveItem('frozen_plaice_fillet', requiredAmount * amount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_plaice_fillet'], 'remove', requiredAmount * amount)
+            if exports['qb-inventory']:RemoveItem(src, 'frozen_plaice_fillet', requiredAmount * amount, false, false, false) then
+                TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_plaice_fillet'], 'remove', requiredAmount * amount)
+            end
         elseif InvType == 'ox' then
             exports.ox_inventory:RemoveItem(src,'frozen_plaice_fillet', requiredAmount * amount)
         end
     elseif pollock then
         fishType = 'frozen_pollock_battered'
         if InvType == 'qb' then
-            Player.Functions.RemoveItem('frozen_pollock_fillet', requiredAmount * amount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_pollock_fillet'], 'remove', requiredAmount * amount)
+            if exports['qb-inventory']:RemoveItem(src, 'frozen_pollock_fillet', requiredAmount * amount, false, false, false) then
+                TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_pollock_fillet'], 'remove', requiredAmount * amount)
+            end
         elseif InvType == 'ox' then
             exports.ox_inventory:RemoveItem(src,'frozen_pollock_fillet', requiredAmount * amount)
         end
     elseif sole then
         fishType = 'frozen_sole_battered'
         if InvType == 'qb' then
-            Player.Functions.RemoveItem('frozen_sole_fillet', requiredAmount * amount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_sole_fillet'], 'remove', requiredAmount * amount)
+            if exports['qb-inventory']:RemoveItem(src, 'frozen_sole_fillet', requiredAmount * amount, false, false, false) then
+                TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_sole_fillet'], 'remove', requiredAmount * amount)
+            end
         elseif InvType == 'ox' then
             exports.ox_inventory:RemoveItem(src,'frozen_sole_fillet', requiredAmount * amount)
         end
     end
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('battermix', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['battermix'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem(fishType, amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[fishType], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'battermix', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['battermix'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, fishType, amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[fishType], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'battermix', requiredAmount * amount) then
@@ -676,12 +685,12 @@ RegisterNetEvent('lusty94_fishnchips:server:BatterSausage', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('battermix', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['battermix'], 'remove', requiredAmount * amount)
-            Player.Functions.RemoveItem('frozen_sausage', requiredAmount * amount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_sausage'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('frozen_sausage_battered', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_sausage_battered'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'battermix', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['battermix'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:RemoveItem(src, 'frozen_sausage', requiredAmount * amount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_sausage'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'frozen_sausage_battered', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_sausage_battered'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'battermix', requiredAmount * amount) then
@@ -703,12 +712,12 @@ RegisterNetEvent('lusty94_fishnchips:server:BatterChocolate', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('battermix', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['battermix'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fishnchips_chocolate', requiredAmount * amount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchips_chocolate'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fishnchips_chocolate_battered', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchips_chocolate_battered'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'battermix', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['battermix'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:RemoveItem(src, 'fishnchips_chocolate', requiredAmount * amount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchips_chocolate'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fishnchips_chocolate_battered', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchips_chocolate_battered'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'battermix', requiredAmount * amount) then
@@ -730,12 +739,12 @@ RegisterNetEvent('lusty94_fishnchips:server:BatterChickenStrips', function(amoun
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('battermix', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['battermix'], 'remove', requiredAmount * amount)
-            Player.Functions.RemoveItem('fishnchipsrawchickenstrips', requiredAmount * amount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsrawchickenstrips'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fishnchipschickenstrips_battered', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipschickenstrips_battered'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'battermix', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['battermix'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:RemoveItem(src, 'fishnchipsrawchickenstrips', requiredAmount * amount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsrawchickenstrips'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fishnchipschickenstrips_battered', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipschickenstrips_battered'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'fishnchipsrawchickenstrips', requiredAmount * amount) then
@@ -759,10 +768,10 @@ RegisterNetEvent('lusty94_fishnchips:server:CookFries', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('fishnchipsrawfries', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsrawfries'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fishnchipsfries', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsfries'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'fishnchipsrawfries', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsrawfries'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fishnchipsfries', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsfries'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'fishnchipsrawfries', requiredAmount * amount) then
@@ -784,10 +793,10 @@ RegisterNetEvent('lusty94_fishnchips:server:CookNuggets', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('fishnchipsrawnuggets', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsrawnuggets'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fishnchipsnuggets', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsnuggets'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'fishnchipsrawnuggets', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsrawnuggets'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fishnchipsnuggets', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsnuggets'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'fishnchipsrawnuggets', requiredAmount * amount) then
@@ -808,10 +817,10 @@ RegisterNetEvent('lusty94_fishnchips:server:CookChickenStrips', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('fishnchipschickenstrips_battered', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipschickenstrips_battered'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fishnchipsfriedchickenstrips', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsfriedchickenstrips'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'fishnchipschickenstrips_battered', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipschickenstrips_battered'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fishnchipsfriedchickenstrips', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsfriedchickenstrips'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'fishnchipschickenstrips_battered', requiredAmount * amount) then
@@ -833,10 +842,10 @@ RegisterNetEvent('lusty94_fishnchips:server:CookFishCake', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('frozen_fishcake', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_fishcake'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fried_fishcake', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fried_fishcake'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'frozen_fishcake', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_fishcake'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fried_fishcake', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fried_fishcake'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'frozen_fishcake', requiredAmount * amount) then
@@ -858,10 +867,10 @@ RegisterNetEvent('lusty94_fishnchips:server:CookSausage', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('frozen_sausage_battered', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_sausage_battered'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fried_sausage', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fried_sausage'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'frozen_sausage_battered', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_sausage_battered'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fried_sausage', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fried_sausage'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'frozen_sausage_battered', requiredAmount * amount) then
@@ -882,10 +891,10 @@ RegisterNetEvent('lusty94_fishnchips:server:CookChocolate', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('fishnchips_chocolate_battered', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchips_chocolate_battered'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fried_chocolate', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fried_chocolate'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'fishnchips_chocolate_battered', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchips_chocolate_battered'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fried_chocolate', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fried_chocolate'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'fishnchips_chocolate_battered', requiredAmount * amount) then
@@ -906,14 +915,14 @@ RegisterNetEvent('lusty94_fishnchips:server:CookCheeseBurger', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('fishnchipsburgerpatty', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsburgerpatty'], 'remove', requiredAmount * amount)
-            Player.Functions.RemoveItem('fishnchipsslicedburgerbun', requiredAmount * amount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsslicedburgerbun'], 'remove', requiredAmount * amount)
-            Player.Functions.RemoveItem('fishnchipscheeseslice', requiredAmount * amount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipscheeseslice'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fishnchipscheeseburger', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipscheeseburger'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'fishnchipsburgerpatty', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsburgerpatty'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:RemoveItem(src, 'fishnchipsslicedburgerbun', requiredAmount * amount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsslicedburgerbun'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:RemoveItem(src, 'fishnchipscheeseslice', requiredAmount * amount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipscheeseslice'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fishnchipscheeseburger', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipscheeseburger'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'fishnchipsburgerpatty', requiredAmount * amount) then
@@ -936,14 +945,14 @@ RegisterNetEvent('lusty94_fishnchips:server:CookChickenBurger', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('fishnchipschickenpatty', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipschickenpatty'], 'remove', requiredAmount * amount)
-            Player.Functions.RemoveItem('fishnchipsslicedburgerbun', requiredAmount * amount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsslicedburgerbun'], 'remove', requiredAmount * amount)
-            Player.Functions.RemoveItem('fishnchipscheeseslice', requiredAmount * amount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipscheeseslice'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fishnchipschickenburger', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipschickenburger'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'fishnchipschickenpatty', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipschickenpatty'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:RemoveItem(src, 'fishnchipsslicedburgerbun', requiredAmount * amount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipsslicedburgerbun'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:RemoveItem(src, 'fishnchipscheeseslice', requiredAmount * amount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipscheeseslice'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fishnchipschickenburger', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fishnchipschickenburger'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'fishnchipschickenpatty', requiredAmount * amount) then
@@ -967,10 +976,10 @@ RegisterNetEvent('lusty94_fishnchips:server:CookCod', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('frozen_cod_battered', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_cod_battered'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fried_cod', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fried_cod'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'frozen_cod_battered', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_cod_battered'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fried_cod', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fried_cod'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'frozen_cod_battered', requiredAmount * amount) then
@@ -991,10 +1000,10 @@ RegisterNetEvent('lusty94_fishnchips:server:CookHaddock', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('frozen_haddock_battered', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_haddock_battered'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fried_haddock', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fried_haddock'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'frozen_haddock_battered', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_haddock_battered'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fried_haddock', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fried_haddock'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'frozen_haddock_battered', requiredAmount * amount) then
@@ -1015,10 +1024,10 @@ RegisterNetEvent('lusty94_fishnchips:server:CookPlaice', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('frozen_plaice_battered', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_plaice_battered'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fried_plaice', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fried_plaice'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'frozen_plaice_battered', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_plaice_battered'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fried_plaice', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fried_plaice'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'frozen_plaice_battered', requiredAmount * amount) then
@@ -1040,10 +1049,10 @@ RegisterNetEvent('lusty94_fishnchips:server:CookPollock', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('frozen_pollock_battered', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_pollock_battered'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fried_pollock', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fried_pollock'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'frozen_pollock_battered', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_pollock_battered'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fried_pollock', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fried_pollock'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'frozen_pollock_battered', requiredAmount * amount) then
@@ -1065,10 +1074,10 @@ RegisterNetEvent('lusty94_fishnchips:server:CookSole', function(amount)
     local requiredAmount = 1
     local returnAmount = 1
     if InvType == 'qb' then
-        if Player.Functions.RemoveItem('frozen_sole_battered', requiredAmount * amount) then
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_sole_battered'], 'remove', requiredAmount * amount)
-            Player.Functions.AddItem('fried_sole', amount * returnAmount)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['fried_sole'], 'add', amount * returnAmount)
+        if exports['qb-inventory']:RemoveItem(src, 'frozen_sole_battered', requiredAmount * amount, false, false, false) then
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['frozen_sole_battered'], 'remove', requiredAmount * amount)
+            exports['qb-inventory']:AddItem(src, 'fried_sole', amount * returnAmount, false, false, false)
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['fried_sole'], 'add', amount * returnAmount)
         end
     elseif InvType == 'ox' then
         if exports.ox_inventory:RemoveItem(src,'frozen_sole_battered', requiredAmount * amount) then
@@ -1082,13 +1091,71 @@ RegisterNetEvent('lusty94_fishnchips:server:CookSole', function(amount)
 end)
 
 
--------------< OX_INVENTORY STASHES >------------
+---------------------------< QB-INVENTORY STASHES >----------------------------------------
+
+
+--storage heater
+RegisterNetEvent('lusty94_fishnchips:server:OpenServiceCounter', function()
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local stashName = 'Fish N Chips Service Counter'
+    local stashInfo = {
+        weight = 100000000,
+        slots = 64,
+    }
+    if Player then
+        exports['qb-inventory']:OpenInventory(src, stashName, {
+            maxweight = stashInfo.weight,
+            slots = stashInfo.slots,
+        })
+    end
+end)
+
+
+
+--storage heater
+RegisterNetEvent('lusty94_fishnchips:server:OpenStorageHeater', function()
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local stashName = 'Fish N Chips Storage Heater'
+    local stashInfo = {
+        weight = 100000000,
+        slots = 64,
+    }
+    if Player then
+        exports['qb-inventory']:OpenInventory(src, stashName, {
+            maxweight = stashInfo.weight,
+            slots = stashInfo.slots,
+        })
+    end
+end)
+
+--collection tray
+RegisterNetEvent('lusty94_fishnchips:server:OpenTray', function()
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local stashName = 'Fish N Chips Collection Tray'
+    local stashInfo = {
+        weight = 10000000,
+        slots = 6,
+    }
+    if Player then
+        exports['qb-inventory']:OpenInventory(src, stashName, {
+            maxweight = stashInfo.weight,
+            slots = stashInfo.slots,
+        })
+    end
+end)
+
+
+---------------------------< OX_INVENTORY STASHES >----------------------------------------
+
 --collection tray
 function fishnchipscollection()
     local collectionTray = {
         id = 'fishnchipscollection',
         label = 'Fish N Chips Collection Tray',
-        slots = 5,
+        slots = 6,
         weight = 10000000,
         owner = false,
     }
